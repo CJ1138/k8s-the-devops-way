@@ -31,7 +31,7 @@ cd ./keys
 # Wait to ensure IAP is activated on the VMs
 sleep 1m
 
-# Deplot keys to VMs
+# Deploy keys to VMs
 for instance in worker-0 worker-1 worker-2; do
   gcloud compute scp ca.pem ${instance}-key.pem ${instance}.pem ${instance}:~/
 done
