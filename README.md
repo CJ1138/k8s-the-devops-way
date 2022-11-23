@@ -33,3 +33,5 @@ Run `terraform init`
 Run `./RUN_ME.sh`
 
 In the current incarnation of this project, the above actions will provision all the required resources in GCP, provision a Certificate Authority & generate the required TLS certs, then correctly disperse the created files to the new VMs.
+
+Running `./scripts/clean-up.sh` will delete all resources on GCP any any created locally.
