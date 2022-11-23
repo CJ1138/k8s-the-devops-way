@@ -1,8 +1,8 @@
-# K8s The Devops Way
+# K8s The DevOps Way
 
 PLEASE NOTE THIS REPO IS A WIP!
 
-An fully automated deployment of Kelsey Hightowers's "Kubernetes The Hard Way" tutorial. Created for my own learning purposes, the intention is to extend the purpose of the origin tutorial (understanding each task required to bootstrap a Kubernetes cluster) by additionally demonstrating how to do that with automation and monitoring tools.
+A fully automated deployment of Kelsey Hightowers's "Kubernetes The Hard Way" tutorial. Created for my own learning purposes, the intention is to extend the purpose of the origin tutorial (understanding each task required to bootstrap a Kubernetes cluster) by additionally demonstrating how to do that with automation tools, and then applying an ongoing monitoring solution.
 
 Sections of the original tutorial currently covered by this repo:
 
