@@ -76,6 +76,7 @@ module "external_address" {
 
 // Create controller nodes
 resource "google_compute_instance" "controllers" {
+  depends_on = [module.vpc]
   project = var.project
   count = 3
   name         = "controller-${count.index}"
@@ -98,7 +99,6 @@ resource "google_compute_instance" "controllers" {
   }
 
   service_account {
-    # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
     email  = null
     scopes = ["compute-rw","storage-ro","service-management","service-control","logging-write","monitoring"]
   }
@@ -106,6 +106,7 @@ resource "google_compute_instance" "controllers" {
 
 // Create worker nodes
 resource "google_compute_instance" "workers" {
+  depends_on = [module.vpc]
   project = var.project
   count = 3
   name         = "worker-${count.index}"
@@ -128,7 +129,6 @@ resource "google_compute_instance" "workers" {
   }
 
   service_account {
-    # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
     email  = null
     scopes = ["compute-rw","storage-ro","service-management","service-control","logging-write","monitoring"]
   }
