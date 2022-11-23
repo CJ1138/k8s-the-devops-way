@@ -1,4 +1,4 @@
-cat > ./scripts/keys/kube-controller-manager-csr.json <<EOF
+cat > ./keys/kube-controller-manager-csr.json <<EOF
 {
   "CN": "system:kube-controller-manager",
   "key": {
@@ -18,8 +18,8 @@ cat > ./scripts/keys/kube-controller-manager-csr.json <<EOF
 EOF
 
 cfssl gencert \
-  -ca=./scripts/keys/ca.pem \
-  -ca-key=./scripts/keys/ca-key.pem \
-  -config=./scripts/keys/ca-config.json \
+  -ca=./keys/ca.pem \
+  -ca-key=./keys/ca-key.pem \
+  -config=./keys/ca-config.json \
   -profile=kubernetes \
-  ./scripts/keys/kube-controller-manager-csr.json | cfssljson -bare ./scripts/keys/kube-controller-manager
+  ./keys/kube-controller-manager-csr.json | cfssljson -bare ./keys/kube-controller-manager

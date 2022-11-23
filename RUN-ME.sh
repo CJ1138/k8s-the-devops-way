@@ -18,20 +18,20 @@ srcdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 terraform apply -var-file=environment.tfvars -auto-approve
 
 # Create PKI resources
-./scripts/ca-config.sh
-./scripts/admin-cert.sh
-./scripts/kublet-certs.sh
-./scripts/kube-controller-cert.sh
-./scripts/kube-proxy-cert.sh
-./scripts/kube-scheduler-cert.sh
-./scripts/api-server-cert.sh
-./scripts/service-account-cert.sh
-cd ./scripts/keys
+./scripts/pki/ca-config.sh
+./scripts/pki/admin-cert.sh
+./scripts/pki/kublet-certs.sh
+./scripts/pki/kube-controller-cert.sh
+./scripts/pki/kube-proxy-cert.sh
+./scripts/pki/kube-scheduler-cert.sh
+./scripts/pki/api-server-cert.sh
+./scripts/pki/service-account-cert.sh
+cd ./keys
 
 # Wait to ensure IAP is activated on the VMs
 sleep 1m
 
-# Deplot keys to VMs
+# Deploy keys to VMs
 for instance in worker-0 worker-1 worker-2; do
   gcloud compute scp ca.pem ${instance}-key.pem ${instance}.pem ${instance}:~/
 done

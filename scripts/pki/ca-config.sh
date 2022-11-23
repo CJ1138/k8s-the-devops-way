@@ -1,5 +1,5 @@
 #!/usr/bin/bash
-cat > ./scripts/keys/ca-config.json <<EOF
+cat > ./keys/ca-config.json <<EOF
 {
   "signing": {
     "default": {
@@ -15,7 +15,7 @@ cat > ./scripts/keys/ca-config.json <<EOF
 }
 EOF
 
-cat > ./scripts/keys/ca-csr.json <<EOF
+cat > ./keys/ca-csr.json <<EOF
 {
   "CN": "Kubernetes",
   "key": {
@@ -34,4 +34,4 @@ cat > ./scripts/keys/ca-csr.json <<EOF
 }
 EOF
 
-cfssl gencert -initca ./scripts/keys/ca-csr.json | cfssljson -bare ./scripts/keys/ca
+cfssl gencert -initca ./keys/ca-csr.json | cfssljson -bare ./keys/ca

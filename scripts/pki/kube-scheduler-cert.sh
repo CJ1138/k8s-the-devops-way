@@ -1,4 +1,4 @@
-cat > ./scripts/keys/kube-scheduler-csr.json <<EOF
+cat > ./keys/kube-scheduler-csr.json <<EOF
 {
   "CN": "system:kube-scheduler",
   "key": {
@@ -18,8 +18,8 @@ cat > ./scripts/keys/kube-scheduler-csr.json <<EOF
 EOF
 
 cfssl gencert \
-  -ca=./scripts/keys/ca.pem \
-  -ca-key=./scripts/keys/ca-key.pem \
-  -config=./scripts/keys/ca-config.json \
+  -ca=./keys/ca.pem \
+  -ca-key=./keys/ca-key.pem \
+  -config=./keys/ca-config.json \
   -profile=kubernetes \
-  ./scripts/keys/kube-scheduler-csr.json | cfssljson -bare ./scripts/keys/kube-scheduler
+  ./keys/kube-scheduler-csr.json | cfssljson -bare ./keys/kube-scheduler
