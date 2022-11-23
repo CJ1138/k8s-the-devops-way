@@ -1,4 +1,4 @@
-cat > ./scripts/keys/service-account-csr.json <<EOF
+cat > ./keys/service-account-csr.json <<EOF
 {
   "CN": "service-accounts",
   "key": {
@@ -18,8 +18,8 @@ cat > ./scripts/keys/service-account-csr.json <<EOF
 EOF
 
 cfssl gencert \
-  -ca=./scripts/keys/ca.pem \
-  -ca-key=./scripts/keys/ca-key.pem \
-  -config=./scripts/keys/ca-config.json \
+  -ca=./keys/ca.pem \
+  -ca-key=./keys/ca-key.pem \
+  -config=./keys/ca-config.json \
   -profile=kubernetes \
-  ./scripts/keys/service-account-csr.json | cfssljson -bare ./scripts/keys/service-account
+  ./keys/service-account-csr.json | cfssljson -bare ./keys/service-account
