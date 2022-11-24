@@ -11,7 +11,8 @@ keyed_groups:
   - key: (tags.items|list)
     prefix: tag
 groups:
-  gke: "'gke' in name"
+  controllers:  "'controller' in name"
+  workers:      "'worker' in name"
 compose:
   # set the ansible_host variable to connect with the private IP address without changing the hostname
   ansible_host: name
