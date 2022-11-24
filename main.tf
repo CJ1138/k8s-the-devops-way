@@ -1,3 +1,9 @@
+// Setup GCP Provider
+provider "google" {
+  project = var.project
+  region  = var.region
+}
+
 // Create network, subnet and firewall rules
 module "vpc" {
   source  = "terraform-google-modules/network/google"
@@ -136,4 +142,10 @@ resource "google_compute_instance" "workers" {
   metadata = {
     pod-cidr = "10.200.${count.index}.0/24"
   }
+}
+
+// Create service account for Ansible
+resource "google_service_account" "service_account" {
+  account_id   = "ansible-service-account"
+  display_name = "Service Account for Ansible"
 }
