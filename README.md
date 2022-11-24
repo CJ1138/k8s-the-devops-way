@@ -10,7 +10,7 @@ Sections of the original tutorial currently covered by this repo:
 - [x] Provisioning Compute Resources
 - [x] Provisioning the CA and Generating TLS Certificates
 - [x] Generating Kubernetes Configuration Files for Authentication
-- [ ] Generating the Data Encryption Config and Key
+- [x] Generating the Data Encryption Config and Key
 - [ ] Bootstrapping the etcd Cluster
 - [ ] Bootstrapping the Kubernetes Control Plane
 - [ ] Bootstrapping the Kubernetes Worker Nodes
