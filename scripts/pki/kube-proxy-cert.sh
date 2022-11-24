@@ -1,4 +1,4 @@
-cat > ./keys/kube-proxy-csr.json <<EOF
+cat > ../../keys/kube-proxy-csr.json <<EOF
 {
   "CN": "system:kube-proxy",
   "key": {
@@ -18,8 +18,8 @@ cat > ./keys/kube-proxy-csr.json <<EOF
 EOF
 
 cfssl gencert \
-  -ca=./keys/ca.pem \
-  -ca-key=./keys/ca-key.pem \
-  -config=./keys/ca-config.json \
+  -ca=../../keys/ca.pem \
+  -ca-key=../../keys/ca-key.pem \
+  -config=../../keys/ca-config.json \
   -profile=kubernetes \
-  ./keys/kube-proxy-csr.json | cfssljson -bare ./keys/kube-proxy
+  ../../keys/kube-proxy-csr.json | cfssljson -bare ../../keys/kube-proxy

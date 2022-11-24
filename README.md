@@ -9,7 +9,7 @@ Sections of the original tutorial currently covered by this repo:
 - [x] Installing the Client Tools
 - [x] Provisioning Compute Resources
 - [x] Provisioning the CA and Generating TLS Certificates
-- [ ] Generating Kubernetes Configuration Files for Authentication
+- [x] Generating Kubernetes Configuration Files for Authentication
 - [ ] Generating the Data Encryption Config and Key
 - [ ] Bootstrapping the etcd Cluster
 - [ ] Bootstrapping the Kubernetes Control Plane
@@ -32,6 +32,11 @@ Run `terraform init`
 
 Run `./RUN_ME.sh`
 
-In the current incarnation of this project, the above actions will provision all the required resources in GCP, provision a Certificate Authority & generate the required TLS certs, then correctly disperse the created files to the new VMs.
+In the current incarnation of this project, the above actions will:
 
-Running `./scripts/clean-up.sh` will delete all resources on GCP any any created locally.
+- Provision the required VMs in GCP
+- Provision a Certificate Authority & generate the required TLS certs
+- Generate the kubeconfig files
+- Correctly disperse the created authenication / config files to the VMs
+
+Running `./scripts/clean-up.sh` will delete all resources on GCP and any created locally.

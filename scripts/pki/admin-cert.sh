@@ -1,4 +1,4 @@
-cat > ./keys/admin-csr.json <<EOF
+cat > ../../keys/admin-csr.json <<EOF
 {
   "CN": "admin",
   "key": {
@@ -18,8 +18,8 @@ cat > ./keys/admin-csr.json <<EOF
 EOF
 
 cfssl gencert \
-  -ca=./keys/ca.pem \
-  -ca-key=./keys/ca-key.pem \
-  -config=./keys/ca-config.json \
+  -ca=../../keys/ca.pem \
+  -ca-key=../../keys/ca-key.pem \
+  -config=../../keys/ca-config.json \
   -profile=kubernetes \
-  ./keys/admin-csr.json | cfssljson -bare ./keys/admin
+  ../../keys/admin-csr.json | cfssljson -bare ../../keys/admin

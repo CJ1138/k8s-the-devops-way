@@ -14,24 +14,29 @@ set -euo pipefail
 [ -n "${DEBUG:-}" ] && set -x
 srcdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+project=$(gcloud config list --format 'value(core.project)')
+
 # Provision the infrastructure
 terraform apply -var-file=environment.tfvars -auto-approve
 
+cd scripts/pki
+
 # Create PKI resources
-./scripts/pki/ca-config.sh
-./scripts/pki/admin-cert.sh
-./scripts/pki/kublet-certs.sh
-./scripts/pki/kube-controller-cert.sh
-./scripts/pki/kube-proxy-cert.sh
-./scripts/pki/kube-scheduler-cert.sh
-./scripts/pki/api-server-cert.sh
-./scripts/pki/service-account-cert.sh
-cd ./keys
+./ca-config.sh
+./admin-cert.sh
+./kublet-certs.sh
+./kube-controller-cert.sh
+./kube-proxy-cert.sh
+./kube-scheduler-cert.sh
+./api-server-cert.sh
+./service-account-cert.sh
 
 # Wait to ensure IAP is activated on the VMs
 sleep 1m
 
 # Deploy keys to VMs
+cd ../../keys
+
 for instance in worker-0 worker-1 worker-2; do
   gcloud compute scp ca.pem ${instance}-key.pem ${instance}.pem ${instance}:~/
 done
@@ -41,4 +46,21 @@ for instance in controller-0 controller-1 controller-2; do
     service-account-key.pem service-account.pem ${instance}:~/
 done
 
-cd ~
+# Get public IP address
+KUBERNETES_PUBLIC_ADDRESS=$(gcloud compute addresses describe kubernetes-the-hard-way \
+  --region $(gcloud config get-value compute/region) \
+  --format 'value(address)')
+
+# Generate kubeconfig files
+
+../scripts/kubeconfigs/generate-configs.sh
+
+cd ../configs
+
+for instance in worker-0 worker-1 worker-2; do
+  gcloud compute scp ${instance}.kubeconfig kube-proxy.kubeconfig ${instance}:~/
+done
+
+for instance in controller-0 controller-1 controller-2; do
+  gcloud compute scp admin.kubeconfig kube-controller-manager.kubeconfig kube-scheduler.kubeconfig ${instance}:~/
+done
