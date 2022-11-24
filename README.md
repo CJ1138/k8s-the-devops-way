@@ -37,6 +37,7 @@ In the current incarnation of this project, the above actions will:
 - Provision the required VMs in GCP
 - Provision a Certificate Authority & generate the required TLS certs
 - Generate the kubeconfig files
-- Correctly disperse the created authenication / config files to the VMs
+- Generate data encryption config and key
+- Correctly disperse the created key / config files to the VMs
 
 Running `./scripts/clean-up.sh` will delete all resources on GCP and any created locally.
