@@ -1,3 +1,9 @@
+// Setup GCP Provider
+provider "google" {
+  project = var.project
+  region  = var.region
+}
+
 // Create network, subnet and firewall rules
 module "vpc" {
   source  = "terraform-google-modules/network/google"
@@ -96,6 +102,9 @@ resource "google_compute_instance" "controllers" {
     subnetwork = var.subnet
     subnetwork_project = var.project
     network_ip = "10.240.0.1${count.index}"
+    access_config {
+      
+    }
   }
 
   service_account {
@@ -126,6 +135,9 @@ resource "google_compute_instance" "workers" {
     subnetwork = var.subnet
     subnetwork_project = var.project
     network_ip = "10.240.0.2${count.index}"
+    access_config {
+      
+    }
   }
 
   service_account {
