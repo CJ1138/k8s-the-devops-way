@@ -88,7 +88,6 @@ for instance in controller-0 controller-1 controller-2; do
   gcloud compute scp encryption-config.yaml ${instance}:~/
 done
 
-cd ..
+cd ../ansible
 
-gcloud iam service-accounts keys create ./keys/ansible-key.json \
-    --iam-account=ansible-service-account@$project.iam.gserviceaccount.com
+ansible-playbook playbook.yml

@@ -102,6 +102,9 @@ resource "google_compute_instance" "controllers" {
     subnetwork = var.subnet
     subnetwork_project = var.project
     network_ip = "10.240.0.1${count.index}"
+    access_config {
+      
+    }
   }
 
   service_account {
@@ -132,6 +135,9 @@ resource "google_compute_instance" "workers" {
     subnetwork = var.subnet
     subnetwork_project = var.project
     network_ip = "10.240.0.2${count.index}"
+    access_config {
+      
+    }
   }
 
   service_account {
@@ -142,10 +148,4 @@ resource "google_compute_instance" "workers" {
   metadata = {
     pod-cidr = "10.200.${count.index}.0/24"
   }
-}
-
-// Create service account for Ansible
-resource "google_service_account" "service_account" {
-  account_id   = "ansible-service-account"
-  display_name = "Service Account for Ansible"
 }

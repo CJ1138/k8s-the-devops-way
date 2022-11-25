@@ -1,0 +1,4 @@
+- hosts: controllers
+  connection: ssh
+  roles:
+    - etcd
