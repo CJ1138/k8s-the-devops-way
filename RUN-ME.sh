@@ -90,4 +90,4 @@ done
 
 cd ../ansible
 
-ansible-playbook playbook.yml
+#ansible-playbook playbook.yml
