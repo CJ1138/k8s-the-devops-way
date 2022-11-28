@@ -2,7 +2,7 @@
 
 PLEASE NOTE THIS REPO IS A WiP!
 
-A fully automated deployment of Kelsey Hightowers's "Kubernetes The Hard Way" tutorial. Created for my own learning purposes, the intention is to extend the purpose of the original tutorial (understanding each task required to bootstrap a Kubernetes cluster) by additionally demonstrating how to do that with automation tools (Terraform, Ansible, shell scripting), and then applying an ongoing monitoring solution.
+A fully automated deployment of Kelsey Hightowers's "Kubernetes The Hard Way" tutorial. Created for my own learning purposes, the intention is to extend the purpose of the original tutorial (understanding each task required to bootstrap a Kubernetes cluster) by additionally demonstrating how to do that on Google Cloud Pkatform with automation tools (Terraform, Ansible, shell scripting), and then applying an ongoing monitoring solution.
 
 Sections of the original tutorial currently covered by this repo:
 

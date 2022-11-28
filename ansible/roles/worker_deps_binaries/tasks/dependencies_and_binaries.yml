@@ -1,0 +1,62 @@
+- name: Install dependencies
+  become: True
+  ansible.builtin.apt:
+    name: "{{ item }}"
+    state: present
+  loop:
+    - socat
+    - conntrack 
+    - ipset
+- name: Download binaries from GitHub
+  get_url:
+    url: https://github.com/{{ item }}
+    dest: ~/
+  loop: 
+    - kubernetes-sigs/cri-tools/releases/download/v1.21.0/crictl-v1.21.0-linux-amd64.tar.gz
+    - opencontainers/runc/releases/download/v1.0.0-rc93/runc.amd64
+    - containernetworking/plugins/releases/download/v0.9.1/cni-plugins-linux-amd64-v0.9.1.tgz
+    - containerd/containerd/releases/download/v1.4.4/containerd-1.4.4-linux-amd64.tar.gz
+- name: Download Kubernetes binaries
+  get_url:
+    url: https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/{{ item }}
+    dest: ~/
+  loop: 
+    - kubectl
+    - kube-proxy
+    - kubelet
+- name: Create the installation directories
+  become: True
+  file:
+    path: "{{ items }}"
+    state: directory
+  loop:
+    - /etc/cni/net.d
+    - /opt/cni/bin
+    - /var/lib/kubelet
+    - /var/lib/kube-proxy
+    - /var/lib/kubernetes
+    - /var/run/kubernetes
+    - ~/containerd
+- name: Extract etcd
+  ansible.builtin.unarchive:
+    keep_newer: true
+    src: ~/crictl-v1.21.0-linux-amd64.tar.gz
+    dest: ~/
+- name: Extract etcd
+  ansible.builtin.unarchive:
+    keep_newer: true
+    src: ~/containerd-1.4.4-linux-amd64.tar.gz
+    dest: ~/containerd
+- name: Extract etcd
+  ansible.builtin.unarchive:
+    become: True
+    keep_newer: true
+    src: ~/cni-plugins-linux-amd64-v0.9.1.tgz
+    dest: /opt/cni/bin/
+- name: Move files to destinations
+  shell: |
+    sudo mv runc.amd64 runc
+    chmod +x crictl kubectl kube-proxy kubelet runc 
+    sudo mv crictl kubectl kube-proxy kubelet runc /usr/local/bin/
+    sudo mv containerd/bin/* /bin/
+
