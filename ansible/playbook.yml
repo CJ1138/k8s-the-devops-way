@@ -2,3 +2,10 @@
   connection: ssh
   roles:
     - etcd
+    - control_plane
+    - nginx_heath_check_proxy
+
+- hosts: controller-0
+  connection: ssh
+  roles:
+    - rbac_config

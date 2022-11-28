@@ -1,6 +1,6 @@
 # K8s The DevOps Way
 
-PLEASE NOTE THIS REPO IS A WIP!
+PLEASE NOTE THIS REPO IS A WiP!
 
 A fully automated deployment of Kelsey Hightowers's "Kubernetes The Hard Way" tutorial. Created for my own learning purposes, the intention is to extend the purpose of the original tutorial (understanding each task required to bootstrap a Kubernetes cluster) by additionally demonstrating how to do that with automation tools, and then applying an ongoing monitoring solution.
 
@@ -12,7 +12,7 @@ Sections of the original tutorial currently covered by this repo:
 - [x] Generating Kubernetes Configuration Files for Authentication
 - [x] Generating the Data Encryption Config and Key
 - [x] Bootstrapping the etcd Cluster
-- [ ] Bootstrapping the Kubernetes Control Plane
+- [x] Bootstrapping the Kubernetes Control Plane
 - [ ] Bootstrapping the Kubernetes Worker Nodes
 - [ ] Configuring kubectl for Remote Access
 - [ ] Provisioning Pod Network Routes
@@ -44,5 +44,6 @@ In the current incarnation of this project, the above actions will:
 - Generate data encryption config and key files
 - Correctly disperse all created key / config files to the VMs
 - Bootstrap an etcd cluster
+- Bootstrap a Kubernetes control plan
 
 Running `./scripts/clean-up.sh` will delete all resources on GCP and any created locally.

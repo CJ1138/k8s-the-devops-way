@@ -1,0 +1,63 @@
+- name: Create the Kubernetes configuration directory
+  become: True
+  ansible.builtin.file:
+    path: /etc/kubernetes/config
+    state: directory
+- name: Download and Install the Kubernetes Controller Binaries
+  get_url:
+    url: "https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/{{ item }}"
+    dest: ~/
+  loop:
+    - kube-apiserver
+    - kube-controller-manager
+    - kube-scheduler
+    - kubectl
+- name: Change file permissions to +x
+  ansible.builtin.file:
+    path: "{{ item }}"
+    mode: a+x
+  loop:
+  - kube-apiserver
+  - kube-controller-manager
+  - kube-scheduler
+  - kubectl
+- name: Install the Kubernetes binaries
+  ansible.builtin.shell: sudo mv kube-apiserver kube-controller-manager kube-scheduler kubectl /usr/local/bin/
+- name: Create the Kubernetes API Server directory
+  become: True
+  ansible.builtin.file:
+    path: /var/lib/kubernetes/
+    state: directory
+- name: Configure Kubernetes API Server
+  become: True
+  ansible.builtin.shell: |
+    sudo cp ca.pem ca-key.pem kubernetes-key.pem kubernetes.pem \
+    service-account-key.pem service-account.pem \
+    encryption-config.yaml /var/lib/kubernetes/
+- name: Create the kube-apiserver.service systemd unit file
+  become: True
+  template:
+    src=templates/kube-apiserver.service dest=/etc/systemd/system/kube-apiserver.service
+- name: Move the kube-controller-manager kubeconfig into place
+  ansible.builtin.shell:
+    sudo cp kube-controller-manager.kubeconfig /var/lib/kubernetes/
+- name: Create the kube-controller-manager.service systemd unit file
+  become: True
+  template:
+    src=templates/kube-controller-manager.service dest=/etc/systemd/system/kube-controller-manager.service
+- name: Move the kube-scheduler kubeconfig into place
+  ansible.builtin.shell:
+    sudo cp kube-scheduler.kubeconfig /var/lib/kubernetes/
+- name: Create the kube-scheduler.yaml configuration file
+  become: True
+  template:
+    src=templates/kube-scheduler.yaml dest=/etc/kubernetes/config/kube-scheduler.yaml
+- name: Create the kube-scheduler.service systemd unit file
+  become: True
+  template:
+    src=templates/kube-scheduler.service dest=/etc/systemd/system/kube-scheduler.service
+- name: Start the Controller Services
+  ansible.builtin.shell: |
+    sudo systemctl daemon-reload
+    sudo systemctl enable kube-apiserver kube-controller-manager kube-scheduler
+    sudo systemctl start kube-apiserver kube-controller-manager kube-scheduler
