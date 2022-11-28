@@ -10,12 +10,12 @@
 - name: Install etcd
   ansible.builtin.shell: sudo mv ~/etcd-v3.4.15-linux-amd64/etcd* /usr/local/bin/
 - name: Create /etc/etcd directory
-  become: yes
+  become: True
   ansible.builtin.file:
     path: /etc/etcd
     state: directory
 - name: Create /var/lib/etcd directory
-  become: yes
+  become: True
   ansible.builtin.file:
     path: /var/lib/etcd
     state: directory
@@ -24,7 +24,7 @@
   ansible.builtin.shell:
     sudo cp ca.pem kubernetes-key.pem kubernetes.pem /etc/etcd/
 - name: Create etcd.service file from template
-  become: yes
+  become: True
   template: src=templates/etcd.service dest=/etc/systemd/system/etcd.service
 - name: Start etcd server
   ansible.builtin.shell: |

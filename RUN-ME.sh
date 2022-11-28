@@ -90,4 +90,8 @@ done
 
 cd ../ansible
 
-#ansible-playbook playbook.yml
+ansible-playbook playbook.yml
+
+cd ..
+
+curl --cacert ./keys/ca.pem https://${KUBERNETES_PUBLIC_ADDRESS}:6443/version     

@@ -4,6 +4,11 @@ provider "google" {
   region  = var.region
 }
 
+provider "google-beta" {
+  project = var.project
+  region  = var.region
+}
+
 // Create network, subnet and firewall rules
 module "vpc" {
   source  = "terraform-google-modules/network/google"
@@ -69,83 +74,116 @@ module "vpc" {
 }
 
 // Create static IP address
-module "external_address" {
-  source       = "terraform-google-modules/address/google"
-  version      = "~> 3.1"
-  project_id   = var.project
-  region       = var.region
-  address_type = "EXTERNAL"
-  names = [
-    "kubernetes-the-hard-way"
-  ]
+resource "google_compute_address" "ip_address" {
+  name = "kubernetes-the-hard-way"
 }
 
 // Create controller nodes
 resource "google_compute_instance" "controllers" {
-  depends_on = [module.vpc]
-  project = var.project
-  count = 3
-  name         = "controller-${count.index}"
-  machine_type = "e2-standard-2"
-  zone         = var.zone
+  depends_on     = [module.vpc]
+  project        = var.project
+  count          = 3
+  name           = "controller-${count.index}"
+  machine_type   = "e2-standard-2"
+  zone           = var.zone
   can_ip_forward = true
-  tags = ["kubernetes-the-hard-way","controller"]
+  tags           = ["kubernetes-the-hard-way", "controller"]
 
   boot_disk {
     initialize_params {
       image = "ubuntu-os-cloud/ubuntu-2004-lts"
-      size = 200
+      size  = 200
     }
   }
 
   network_interface {
-    subnetwork = var.subnet
+    subnetwork         = var.subnet
     subnetwork_project = var.project
-    network_ip = "10.240.0.1${count.index}"
+    network_ip         = "10.240.0.1${count.index}"
     access_config {
-      
+
     }
   }
 
   service_account {
     email  = null
-    scopes = ["compute-rw","storage-ro","service-management","service-control","logging-write","monitoring"]
+    scopes = ["compute-rw", "storage-ro", "service-management", "service-control", "logging-write", "monitoring"]
   }
 }
 
 // Create worker nodes
 resource "google_compute_instance" "workers" {
-  depends_on = [module.vpc]
-  project = var.project
-  count = 3
-  name         = "worker-${count.index}"
-  machine_type = "e2-standard-2"
-  zone         = var.zone
+  depends_on     = [module.vpc]
+  project        = var.project
+  count          = 3
+  name           = "worker-${count.index}"
+  machine_type   = "e2-standard-2"
+  zone           = var.zone
   can_ip_forward = true
-  tags = ["kubernetes-the-hard-way","worker"]
+  tags           = ["kubernetes-the-hard-way", "worker"]
 
   boot_disk {
     initialize_params {
       image = "ubuntu-os-cloud/ubuntu-2004-lts"
-      size = 200
+      size  = 200
     }
   }
 
   network_interface {
-    subnetwork = var.subnet
+    subnetwork         = var.subnet
     subnetwork_project = var.project
-    network_ip = "10.240.0.2${count.index}"
+    network_ip         = "10.240.0.2${count.index}"
     access_config {
-      
+
     }
   }
 
   service_account {
     email  = null
-    scopes = ["compute-rw","storage-ro","service-management","service-control","logging-write","monitoring"]
+    scopes = ["compute-rw", "storage-ro", "service-management", "service-control", "logging-write", "monitoring"]
   }
 
   metadata = {
     pod-cidr = "10.200.${count.index}.0/24"
   }
+}
+
+resource "google_compute_http_health_check" "default" {
+  name         = "kubernetes"
+  description  = "Kubernetes Health Check"
+  host         = "kubernetes.default.svc.cluster.local"
+  request_path = "/healthz"
+}
+
+resource "google_compute_firewall" "default" {
+  name    = "kubernetes-the-hard-way-allow-health-check"
+  depends_on     = [module.vpc]
+  network = var.network
+
+  allow {
+    protocol = "tcp"
+  }
+  source_ranges = ["209.85.152.0/22", "209.85.204.0/22", "35.191.0.0/16"]
+}
+
+resource "google_compute_target_pool" "default" {
+  name = "kubernetes-target-pool"
+  instances = [
+    "${var.zone}/controller-0",
+    "${var.zone}/controller-1",
+    "${var.zone}/controller-2"
+  ]
+  health_checks = [
+    "kubernetes"
+  ]
+}
+
+resource "google_compute_forwarding_rule" "fwd_rule" {
+  provider = google-beta
+  name     = "kubernetes-forwarding-rule"
+  ip_address = google_compute_address.ip_address.address
+  port_range    = "6443"
+  target   = google_compute_target_pool.default.id
+  region   = var.region
+  
 }

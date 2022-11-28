@@ -1,10 +1,10 @@
 - name: Install nginx
-  become: yes
+  become: True
   ansible.builtin.apt:
     name: nginx
     state: present
 - name: Create nginx config file
-  become: yes
+  become: True
   template:
     src=templates/kubernetes.default.svc.cluster.local dest=/etc/nginx/sites-available/kubernetes.default.svc.cluster.local
 - name: Create link to file

@@ -13,6 +13,9 @@ keyed_groups:
 groups:
   controllers:  "'controller' in name"
   workers:      "'worker' in name"
+hostnames:
+  # List host by name instead of the default public ip
+  - name
 compose:
   # set the ansible_host variable to connect with the private IP address without changing the hostname
   ansible_host: name
