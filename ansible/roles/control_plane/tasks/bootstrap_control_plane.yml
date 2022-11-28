@@ -1,0 +1,36 @@
+- name: Create the Kubernetes configuration directory
+  become: yes
+  ansible.builtin.file:
+    path: /etc/kubernetes/config
+    state: directory
+- name: Download and Install the Kubernetes Controller Binaries
+  get_url:
+    url: "https://storage.googleapis.com/kubernetes-release/release/v1.21.0/bin/linux/amd64/{{ item }}"
+    dest: ~/
+  loop:
+    - kube-apiserver
+    - kube-controller-manager
+    - kube-scheduler
+    - kubectl
+- name: Change file permissions to +x
+  ansible.builtin.file:
+    path: "{{ item }}"
+    mode: a+x
+  loop:
+  - kube-apiserver
+  - kube-controller-manager
+  - kube-scheduler
+  - kubectl
+- name: Install the Kubernetes binaries
+  ansible.builtin.shell: sudo mv kube-apiserver kube-controller-manager kube-scheduler kubectl /usr/local/bin/
+- name: Create the Kubernetes API Server directory
+  become: yes
+  ansible.builtin.file:
+    path: /var/lib/kubernetes/
+    state: directory
+- name: Configure Kubernetes API Server
+  become: yes
+  ansible.builtin.shell: |
+    sudo mv ca.pem ca-key.pem kubernetes-key.pem kubernetes.pem \
+    service-account-key.pem service-account.pem \
+    encryption-config.yaml /var/lib/kubernetes/
