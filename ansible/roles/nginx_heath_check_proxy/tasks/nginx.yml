@@ -1,0 +1,16 @@
+- name: Install nginx
+  become: yes
+  ansible.builtin.apt:
+    name: nginx
+    state: present
+- name: Create nginx config file
+  become: yes
+  template:
+    src=templates/kubernetes.default.svc.cluster.local dest=/etc/nginx/sites-available/kubernetes.default.svc.cluster.local
+- name: Create link to file
+  ansible.builtin.shell:
+    sudo ln -s /etc/nginx/sites-available/kubernetes.default.svc.cluster.local /etc/nginx/sites-enabled/
+- name: Start nginx
+  ansible.builtin.shell: |
+    sudo systemctl restart nginx
+    sudo systemctl enable nginx
