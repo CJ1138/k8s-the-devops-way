@@ -14,11 +14,11 @@ Sections of the original tutorial currently covered by this repo:
 - [x] Bootstrapping the etcd Cluster
 - [x] Bootstrapping the Kubernetes Control Plane
 - [x] Bootstrapping the Kubernetes Worker Nodes
-- [ ] Configuring kubectl for Remote Access
-- [ ] Provisioning Pod Network Routes
-- [ ] Deploying the DNS Cluster Add-on
+- [x] Configuring kubectl for Remote Access
+- [x] Provisioning Pod Network Routes
+- [x] Deploying the DNS Cluster Add-on
 - [ ] Smoke Test
-- [ ] Cleaning Up
+- [x] Cleaning Up
 
 ## Instructions
 
@@ -45,5 +45,9 @@ In the current incarnation of this project, the above actions will:
 - Correctly disperse all created key / config files to the VMs
 - Bootstrap an etcd cluster
 - Bootstrap a Kubernetes control plane
+- Bootstrap 3 Kubernetes worker nodes
+- Configure kubectl for Remote Access
+- Provision Pod Network Routes
+- Deploy the DNS Cluster Add-on
 
-Running `./scripts/clean-up.sh` will delete all resources on GCP and any created locally.
+Running `./scripts/clean-up.sh` will delete all resources on GCP and any files created dynamically by the above process.

@@ -188,3 +188,14 @@ resource "google_compute_forwarding_rule" "fwd_rule" {
   region   = var.region
   
 }
+
+resource "google_compute_route" "default" {
+  depends_on = [
+    module.vpc
+  ]
+  count = 3
+  name        = "kubernetes-route-10-200-${count.index}-0-24"
+  network     = var.network
+  next_hop_ip = "10.240.0.2${count.index}"
+  dest_range  = "10.200.${count.index}.0/24"
+}
