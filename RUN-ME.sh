@@ -14,10 +14,17 @@ set -euo pipefail
 [ -n "${DEBUG:-}" ] && set -x
 srcdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-project=$(gcloud config list --format 'value(core.project)')
+export project=$(gcloud config list --format 'value(core.project)')
 
 # Provision the infrastructure
 terraform apply -var-file=environment.tfvars -auto-approve
+
+# Get public IP address
+export KUBERNETES_PUBLIC_ADDRESS=$(gcloud compute addresses describe kubernetes-the-hard-way \
+  --region $(gcloud config get-value compute/region) \
+  --format 'value(address)')
+
+export KUBERNETES_HOSTNAMES=kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local
 
 cd scripts/pki
 
@@ -94,4 +101,38 @@ ansible-playbook playbook.yml
 
 cd ..
 
-curl --cacert ./keys/ca.pem https://${KUBERNETES_PUBLIC_ADDRESS}:6443/version     
+curl --cacert ./keys/ca.pem https://${KUBERNETES_PUBLIC_ADDRESS}:6443/version
+
+gcloud compute ssh controller-0 \
+  --command "kubectl get nodes --kubeconfig admin.kubeconfig"
+
+kubectl config set-cluster kubernetes-the-hard-way \
+  --certificate-authority=ca.pem \
+  --embed-certs=true \
+  --server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443
+
+kubectl config set-credentials admin \
+  --client-certificate=admin.pem \
+  --client-key=admin-key.pem
+
+kubectl config set-context kubernetes-the-hard-way \
+  --cluster=kubernetes-the-hard-way \
+  --user=admin
+
+kubectl config use-context kubernetes-the-hard-way
+
+for instance in worker-0 worker-1 worker-2; do
+  gcloud compute instances describe ${instance} \
+    --format 'value[separator=" "](networkInterfaces[0].networkIP,metadata.items[0].value)'
+done
+
+for i in 0 1 2; do
+  gcloud compute routes create kubernetes-route-10-200-${i}-0-24 \
+    --network kubernetes-the-hard-way \
+    --next-hop-address 10.240.0.2${i} \
+    --destination-range 10.200.${i}.0/24
+done
+
+kubectl apply -f https://storage.googleapis.com/kubernetes-the-hard-way/coredns-1.8.yaml
+
+kubectl get pods -l k8s-app=kube-dns -n kube-system

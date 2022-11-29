@@ -1,0 +1,13 @@
+- name: Create /etc/containerd/
+  become: True
+  file:
+    path: /etc/containerd/
+    state: directory
+- name: Create the containerd configuration file
+  become: True
+  template:
+    src=templates/config.toml dest=/etc/containerd/config.toml
+- name: Create the containerd.service systemd unit file
+  become: True
+  template:
+    src=templates/containerd.service dest=/etc/systemd/system/containerd.service

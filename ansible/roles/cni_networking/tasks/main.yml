@@ -1,0 +1,31 @@
+---
+# tasks file for roles/cni_networking
+- name: Create the bridge network configuration file
+  shell: |
+    cat <<EOF | sudo tee /etc/cni/net.d/10-bridge.conf
+    {
+        "cniVersion": "0.4.0",
+        "name": "bridge",
+        "type": "bridge",
+        "bridge": "cnio0",
+        "isGateway": true,
+        "ipMasq": true,
+        "ipam": {
+            "type": "host-local",
+            "ranges": [
+              [{"subnet": "{{ hostvars[inventory_hostname]['metadata']['pod-cidr'] }}"}]
+            ],
+            "routes": [{"dst": "0.0.0.0/0"}]
+        }
+    }
+    EOF
+- name: Create the loopback network configuration file
+  shell: |
+    cat <<EOF | sudo tee /etc/cni/net.d/99-loopback.conf
+    {
+        "cniVersion": "0.4.0",
+        "name": "lo",
+        "type": "loopback"
+    }
+    EOF
+

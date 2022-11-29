@@ -13,7 +13,7 @@ Sections of the original tutorial currently covered by this repo:
 - [x] Generating the Data Encryption Config and Key
 - [x] Bootstrapping the etcd Cluster
 - [x] Bootstrapping the Kubernetes Control Plane
-- [ ] Bootstrapping the Kubernetes Worker Nodes
+- [x] Bootstrapping the Kubernetes Worker Nodes
 - [ ] Configuring kubectl for Remote Access
 - [ ] Provisioning Pod Network Routes
 - [ ] Deploying the DNS Cluster Add-on

@@ -1,0 +1,8 @@
+---
+# tasks file for roles/start_workers
+- name: Start services
+  shell: |
+    sudo systemctl daemon-reload
+    sudo systemctl enable containerd kubelet kube-proxy
+    sudo systemctl start containerd kubelet kube-proxy
+

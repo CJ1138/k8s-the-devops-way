@@ -168,6 +168,7 @@ resource "google_compute_firewall" "default" {
 
 resource "google_compute_target_pool" "default" {
   name = "kubernetes-target-pool"
+  depends_on = [google_compute_http_health_check.default]
   instances = [
     "${var.zone}/controller-0",
     "${var.zone}/controller-1",

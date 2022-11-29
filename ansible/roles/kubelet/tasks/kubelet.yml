@@ -1,0 +1,13 @@
+- name: Move files into place
+  shell: |
+    sudo mv {{ ansible_facts['nodename'] }}-key.pem {{ ansible_facts['nodename'] }}.pem /var/lib/kubelet/
+    sudo mv {{ ansible_facts['nodename'] }}.kubeconfig /var/lib/kubelet/kubeconfig
+    sudo mv ca.pem /var/lib/kubernetes/
+- name: Create the kublet-config.yaml file
+  become: True
+  template:
+    src=templates/kubelet-config.yaml dest=/var/lib/kubelet/kubelet-config.yaml
+- name: Create the kubelet.service file
+  become: True
+  template:
+    src=templates/kubelet.service dest=/etc/systemd/system/kubelet.service

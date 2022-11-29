@@ -1,0 +1,11 @@
+- name: Move file into place
+  shell:
+    sudo mv kube-proxy.kubeconfig /var/lib/kube-proxy/kubeconfig
+- name: Create the kube-proxy-config.yaml configuration file
+  become: True
+  template:
+    src=templates/kube-proxy-config.yaml dest=/var/lib/kube-proxy/kube-proxy-config.yaml
+- name: Create the kube-proxy.service systemd unit file
+  become: True
+  template:
+    src=templates/kube-proxy.service dest=/etc/systemd/system/kube-proxy.service
