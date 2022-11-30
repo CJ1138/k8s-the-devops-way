@@ -34,6 +34,10 @@ Install client tools (Linux only): `$ ./scripts/client-tools-linux.sh`
 
 Run `terraform init`
 
+Change name of GCP Project (and, optionally, Region / Zone) in `./environment.tfvars`.
+
+Change name of GCP Project in `./ansible/ansible.cfg`.
+
 Run `./RUN_ME.sh`
 
 In the current incarnation of this project, the above actions will:
