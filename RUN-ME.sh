@@ -14,10 +14,17 @@ set -euo pipefail
 [ -n "${DEBUG:-}" ] && set -x
 srcdir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
-project=$(gcloud config list --format 'value(core.project)')
+export project=$(gcloud config list --format 'value(core.project)')
 
 # Provision the infrastructure
 terraform apply -var-file=environment.tfvars -auto-approve
+
+# Get public IP address
+export KUBERNETES_PUBLIC_ADDRESS=$(gcloud compute addresses describe kubernetes-the-hard-way \
+  --region $(gcloud config get-value compute/region) \
+  --format 'value(address)')
+
+export KUBERNETES_HOSTNAMES=kubernetes,kubernetes.default,kubernetes.default.svc,kubernetes.default.svc.cluster,kubernetes.svc.cluster.local
 
 cd scripts/pki
 
@@ -92,6 +99,35 @@ cd ../ansible
 
 ansible-playbook playbook.yml
 
+cd ../keys
+
+curl --cacert ca.pem https://${KUBERNETES_PUBLIC_ADDRESS}:6443/version
+
+# Wait to ensure pods are active
+sleep 1m
+
+gcloud compute ssh controller-0 \
+  --command "kubectl get nodes --kubeconfig admin.kubeconfig"
+
+kubectl config set-cluster kubernetes-the-hard-way \
+  --certificate-authority=ca.pem \
+  --embed-certs=true \
+  --server=https://${KUBERNETES_PUBLIC_ADDRESS}:6443
+
+kubectl config set-credentials admin \
+  --client-certificate=admin.pem \
+  --client-key=admin-key.pem
+
+kubectl config set-context kubernetes-the-hard-way \
+  --cluster=kubernetes-the-hard-way \
+  --user=admin
+
 cd ..
 
-curl --cacert ./keys/ca.pem https://${KUBERNETES_PUBLIC_ADDRESS}:6443/version     
+kubectl config use-context kubernetes-the-hard-way
+
+gcloud compute routes list --filter "network: kubernetes-the-hard-way"
+
+kubectl apply -f https://storage.googleapis.com/kubernetes-the-hard-way/coredns-1.8.yaml
+
+kubectl get pods -l k8s-app=kube-dns -n kube-system

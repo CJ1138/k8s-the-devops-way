@@ -9,3 +9,13 @@
   connection: ssh
   roles:
     - rbac_config
+
+- hosts: workers
+  connection: ssh
+  roles:
+    - worker_deps_binaries
+    - cni_networking
+    - containerd
+    - kubelet
+    - kubernetes_proxy
+    - start_workers

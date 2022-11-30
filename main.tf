@@ -168,6 +168,7 @@ resource "google_compute_firewall" "default" {
 
 resource "google_compute_target_pool" "default" {
   name = "kubernetes-target-pool"
+  depends_on = [google_compute_http_health_check.default]
   instances = [
     "${var.zone}/controller-0",
     "${var.zone}/controller-1",
@@ -186,4 +187,15 @@ resource "google_compute_forwarding_rule" "fwd_rule" {
   target   = google_compute_target_pool.default.id
   region   = var.region
   
+}
+
+resource "google_compute_route" "default" {
+  depends_on = [
+    module.vpc
+  ]
+  count = 3
+  name        = "kubernetes-route-10-200-${count.index}-0-24"
+  network     = var.network
+  next_hop_ip = "10.240.0.2${count.index}"
+  dest_range  = "10.200.${count.index}.0/24"
 }

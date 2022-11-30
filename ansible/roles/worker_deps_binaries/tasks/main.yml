@@ -1,0 +1,3 @@
+---
+# tasks file for roles/worker_deps_binaries
+- import_tasks: dependencies_and_binaries.yml

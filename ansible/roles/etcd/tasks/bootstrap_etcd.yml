@@ -4,6 +4,7 @@
     dest: ~/etcd-v3.4.15-linux-amd64.tar.gz
 - name: Extract etcd
   ansible.builtin.unarchive:
+    remote_src: true
     keep_newer: true
     src: ~/etcd-v3.4.15-linux-amd64.tar.gz
     dest: ~/
