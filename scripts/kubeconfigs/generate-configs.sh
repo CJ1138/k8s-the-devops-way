@@ -19,6 +19,7 @@ for instance in worker-0 worker-1 worker-2; do
     --kubeconfig=../configs/${instance}.kubeconfig
 
   kubectl config use-context default --kubeconfig=../configs/${instance}.kubeconfig
+  
 done
 
 # kube-proxy

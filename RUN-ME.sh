@@ -99,9 +99,12 @@ cd ../ansible
 
 ansible-playbook playbook.yml
 
-cd ..
+cd ../keys
 
-curl --cacert ./keys/ca.pem https://${KUBERNETES_PUBLIC_ADDRESS}:6443/version
+curl --cacert ca.pem https://${KUBERNETES_PUBLIC_ADDRESS}:6443/version
+
+# Wait to ensure pods are active
+sleep 1m
 
 gcloud compute ssh controller-0 \
   --command "kubectl get nodes --kubeconfig admin.kubeconfig"
@@ -119,7 +122,11 @@ kubectl config set-context kubernetes-the-hard-way \
   --cluster=kubernetes-the-hard-way \
   --user=admin
 
+cd ..
+
 kubectl config use-context kubernetes-the-hard-way
+
+gcloud compute routes list --filter "network: kubernetes-the-hard-way"
 
 kubectl apply -f https://storage.googleapis.com/kubernetes-the-hard-way/coredns-1.8.yaml
 
